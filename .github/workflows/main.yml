@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
  
 env: 
-  BACKEND_TESTS: ${{ secrets.BACKEND_TESTS }}
+  BACKEND_REGISTRY_TESTS: ${{ secrets.BACKEND_REGISTRY_TESTS }}
   FRONTEND_LOGIN_TESTS: ${{ secrets.FRONTEND_LOGIN_TESTS }}
   FRONTEND_REGISTRY_TESTS: ${{ secrets.FRONTEND_REGISTRY_TESTS }}
 
@@ -48,7 +48,7 @@ jobs:
           timeout_minutes: 7
           max_attempts: 3
           retry_on: error
-          command:  npx cypress run --spec ${BACKEND_TESTS} --headless
+          command:  npx cypress run --spec ${BACKEND_REGISTRY_TESTS} --headless
       - name: Upload Cypress screenshots on failure
         uses: actions/upload-artifact@v4
         if: failure()
