@@ -1,6 +1,6 @@
 # Arquitetura do Projeto de Testes Automatizados - Frontend e API
 
-Este projeto as melhores práticas para testes automatizados, com uma arquitetura **modular e organizada** que permite **reuso de classes e interfaces globais** entre os testes de frontend e backend.  
+Este projeto usa as melhores práticas para testes automatizados, com uma arquitetura **modular e organizada** que permite **reuso de classes e interfaces globais** entre os testes de frontend e backend.  
 
 ---
 
