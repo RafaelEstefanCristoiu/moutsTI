@@ -1,0 +1,80 @@
+name: Tests FrontEnd and Backend to Main Environment
+
+on:
+  push:
+    branches:
+     - main
+  workflow_dispatch:
+ 
+env: 
+  BACKEND_TESTS: ${{ secrets.FRONTEND_TESTS }}
+  FRONTEND_LOGIN_TESTS: ${{ secrets.FRONTEND_LOGIN_TESTS }}
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: cypress-tests-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:  
+  build-cypress-image-test:
+    runs-on: ubuntu-24.04
+    container:
+      image: cypress/included:13.14.0
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: install node dependencies
+        run: npm install
+      - name: cypress version
+        run: npx cypress --version
+  
+  BACKEND_REGISTRY_TESTS:
+    needs: build-cypress-image-test
+    runs-on: ubuntu-24.04
+    container:
+      image: cypress/included:13.14.0
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: install node dependencies
+        run: npm install
+      - name: tests
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 7
+          max_attempts: 3
+          retry_on: error
+          command:  npx cypress run --spec ${BACKEND_TESTS} --headless
+      - name: Upload Cypress screenshots on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: login-videos
+          path: cypress/videos
+  
+  FRONTEND_LOGIN_TESTS:
+    needs: BACKEND_REGISTRY_TESTS
+    runs-on: ubuntu-24.04
+    container:
+      image: cypress/included:13.14.0
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: install node dependencies
+        run: npm install
+      - name: tests
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 7
+          max_attempts: 3
+          retry_on: error
+          command: npx cypress run --spec ${FRONTEND_LOGIN_TESTS} --headless  
+      - name: Upload Cypress screenshots on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: login-videos
+          path: cypress/videos
