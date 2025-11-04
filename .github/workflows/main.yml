@@ -7,8 +7,9 @@ on:
   workflow_dispatch:
  
 env: 
-  BACKEND_TESTS: ${{ secrets.FRONTEND_TESTS }}
+  BACKEND_TESTS: ${{ secrets.BACKEND_TESTS }}
   FRONTEND_LOGIN_TESTS: ${{ secrets.FRONTEND_LOGIN_TESTS }}
+  FRONTEND_REGISTRY_TESTS: ${{ secrets.FRONTEND_REGISTRY_TESTS }}
 
 permissions:
   contents: write
@@ -22,7 +23,7 @@ jobs:
   build-cypress-image-test:
     runs-on: ubuntu-24.04
     container:
-      image: cypress/included:13.14.0
+      image: cypress/included:14.4.0
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -72,6 +73,30 @@ jobs:
           max_attempts: 3
           retry_on: error
           command: npx cypress run --spec ${FRONTEND_LOGIN_TESTS} --headless  
+      - name: Upload Cypress screenshots on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: login-videos
+          path: cypress/videos
+
+  FRONTEND_REGISTRY_TESTS:
+    needs: FRONTEND_LOGIN_TESTS
+    runs-on: ubuntu-24.04
+    container:
+      image: cypress/included:13.14.0
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: install node dependencies
+        run: npm install
+      - name: tests
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 7
+          max_attempts: 3
+          retry_on: error
+          command: npx cypress run --spec ${FRONTEND_REGISTRY_TESTS} --headless  
       - name: Upload Cypress screenshots on failure
         uses: actions/upload-artifact@v4
         if: failure()
