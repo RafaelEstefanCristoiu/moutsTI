@@ -17,5 +17,36 @@ class RequestsPost implements IRequestsPost {
         },
       }).then((response) => response.body.id).as('userAuthentication');
   };
+  userAuthenticationFailed() {
+    const createUser = 'Fulano da Silva';
+    const email = 'beltrano@qa.com.br';
+    const password = 'Teste'
+    return cy.api({
+        method: 'POST',
+        url: `${api}`,
+        failOnStatusCode: false,
+        body: {
+          nome: `${createUser}`,
+          email: `${email}`,
+          password: `${password}`,
+          administrador: 'true',
+        },
+      }).as('userAuthenticationFailed');
+  };
+  userAuthenticationFailedEmptyAdmin() {
+    const createUser = 'Fulano da Silva';
+    const email = 'beltrano@qa.com.br';
+    const password = 'Teste'
+    return cy.api({
+        method: 'POST',
+        url: `${api}`,
+        failOnStatusCode: false,
+        body: {
+          nome: `${createUser}`,
+          email: `${email}`,
+          password: `${password}`
+        },
+      }).as('userAuthenticationFailedEmptyAdmin');
+  };
 };
 export default new RequestsPost();

@@ -4,5 +4,11 @@ class Requests implements IGeneralApi {
   createUserGeneralAuthentication() {
     return users.userAuthentication();
   };
+  createUserGeneralAuthenticationFailed() {
+    return users.userAuthenticationFailed();
+  };
+  createUserGeneralAuthenticationFailedEmptyAdmin() {
+    return users.userAuthenticationFailedEmptyAdmin();
+  };
 };
 export default new Requests();
